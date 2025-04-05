@@ -1,10 +1,10 @@
-# smfl-for-fun
+# cpp-fun
 
-Small project to eventually explore the following in detail:
+Small project to eventually explore the following:
 
 - [ ] ECS
 - [ ] Shaders
 - [ ] Animations
 - [ ] Audio
-- [ ] Physics????
-- [ ] DOOM???????
+- [ ] Physics
+- [ ] DOOM???
