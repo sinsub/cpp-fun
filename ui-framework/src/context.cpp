@@ -4,14 +4,14 @@
 
 namespace uif {
 
-static void init(MouseState& mouse_state, std::shared_ptr<sf::RenderWindow>& window) {
+static void init(MouseState& mouse_state, sf::RenderWindow& window) {
     mouse_state.in_window = false;
     mouse_state.left_down = false;
     mouse_state.left_up = false;
     mouse_state.right_down = false;
     mouse_state.right_up = false;
 
-    auto pos = sf::Mouse::getPosition(*window);
+    auto pos = sf::Mouse::getPosition(window);
     mouse_state.last_x = pos.x;
     mouse_state.last_y = pos.y;
 }
@@ -23,9 +23,8 @@ static void reset_for_frame(MouseState& mouse_state) {
     mouse_state.right_up = false;
 }
 
-Context::Context(std::shared_ptr<sf::RenderWindow> window) {
-    this->window = window;
-    init(mouse_state, window);
+Context::Context(std::unique_ptr<sf::RenderWindow> window) : window(std::move(window)) {
+    init(mouse_state, *(this->window));
 }
 
 // done once per frame
@@ -84,6 +83,14 @@ void Context::render() {
         } else if (mouse_state.right_down) {
             right_clicks.push_back({x, y});
         }
+    }
+}
+
+void Context::run() {
+    while (window->isOpen()) {
+        process_events();
+        render();
+        window->display();
     }
 }
 

@@ -23,13 +23,15 @@ struct MouseState {
     bool right_up;
 };
 
+// This is a context for a particular window. It 
 struct Context {
-    Context(std::shared_ptr<sf::RenderWindow> window);
+    Context(std::unique_ptr<sf::RenderWindow> window);
     void process_events();
     void render();
+    void run();
 
     // memers
-    std::shared_ptr<sf::RenderWindow> window;
+    std::unique_ptr<sf::RenderWindow> window;
     MouseState mouse_state;
 };
 
