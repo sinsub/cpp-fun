@@ -23,12 +23,46 @@ static void reset_for_frame(MouseState& mouse_state) {
     mouse_state.right_up = false;
 }
 
+// BEGIN: public API
+
 Context::Context(std::unique_ptr<sf::RenderWindow> window) : window(std::move(window)) {
     init(mouse_state, *(this->window));
 }
 
-// done once per frame
+void Context::run() {
+    while (window->isOpen()) {
+        process_events();
+        process_sfml_events();
+        render();
+    }
+}
+
+void Context::set_scene(Scene* new_scene) {
+    event_queue.push([this, new_scene]() {
+        if (this->scene) {
+            this->scene->on_destory();
+            this->scene = nullptr;
+        }
+        this->scene = std::unique_ptr<Scene>(new_scene);
+        if (this->scene) {
+            this->scene->on_create();
+        }
+    });
+}
+
+// END: public API
+
+// BEGIN: Render Loop
+
 void Context::process_events() {
+    while (!event_queue.empty()) {
+        event_queue.front()();
+        event_queue.pop();
+    }
+}
+
+// done once per frame
+void Context::process_sfml_events() {
     reset_for_frame(mouse_state);
     while (const std::optional event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
@@ -57,9 +91,20 @@ void Context::process_events() {
 }
 
 void Context::render() {
+    window->clear(sf::Color::Black);
+
+    if (scene) {
+        scene->render(this);
+    } else {
+        default_render();
+    }
+
+    window->display();
+}
+
+void Context::default_render() {
     static std::vector<std::pair<float, float>> left_clicks{};
     static std::vector<std::pair<float, float>> right_clicks{};
-    window->clear(sf::Color::Black);
     float radius = 10.f;
     sf::CircleShape dot(radius);
     for (auto loc : left_clicks) {
@@ -86,12 +131,6 @@ void Context::render() {
     }
 }
 
-void Context::run() {
-    while (window->isOpen()) {
-        process_events();
-        render();
-        window->display();
-    }
-}
+// END: Render Loop
 
 }  // namespace uif

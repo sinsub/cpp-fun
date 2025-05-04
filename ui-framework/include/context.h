@@ -1,38 +1,68 @@
 #ifndef UIF_CONTEXT_H_
 #define UIF_CONTEXT_H_
 
+#include <mouse.h>
+
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <functional>
 #include <memory>
+#include <queue>
+
 namespace uif {
 
-// struct for storing the mouse state for a window.
-// - `in_window`: has the mouse entered the window.
-// - `last_x`: last known x position of the mouse, check `in_window`
-// - `last_y`: last known y position of the mouse, check `in_window`
-// - `left_down`: did we receive a left mouse down event in this frame
-// - `left_up`: did we receive a left mouse up event in this frame
-// - `right_down`: did we receive a right mouse down event in this frame
-// - `right_up`: did we receive a right mouse up event in this frame
-struct MouseState {
-    bool in_window;
-    int last_x;
-    int last_y;
-    bool left_down;
-    bool left_up;
-    bool right_down;
-    bool right_up;
-};
+// forward delarations for Context
+struct Scene;
 
-// This is a context for a particular window. It 
-struct Context {
+// Context for a particular window.
+class Context {
+   public:
     Context(std::unique_ptr<sf::RenderWindow> window);
-    void process_events();
-    void render();
+
+    // Start running the window. Returns after the window has been closed!
     void run();
 
-    // memers
+    // Set a particular scene, this is asynchronous.
+    // Switch occurs at the start of the next frame.
+    void set_scene(Scene *scene);
+
+   private:
+    // The following three methods are interally called by `run`
+    // in the exact sequence for each frame.
+
+    // Processes events that were received by the context (`event_queue`)
+    void process_events();
+
+    // Processs events that were received by the `sf::RenderWindow`
+    void process_sfml_events();
+
+    // If there is a  `scene`, calls `scene->render(this)`.
+    // If there is no `scene`, calls `default_render`
+    void render();
+
+    void default_render();
+
+    // Data members
+   public:
+    // Public for now, to allow scenes to render anything sfml allows
     std::unique_ptr<sf::RenderWindow> window;
+
+   private:
     MouseState mouse_state;
+    std::unique_ptr<Scene> scene;
+    std::queue<std::function<void()>> event_queue;
+};
+
+struct Scene {
+    virtual ~Scene() = default;
+
+    // invoked once when the scene is set
+    virtual void on_create() = 0;
+
+    // invoked every frame to render the scene
+    virtual void render(Context *context) = 0;
+
+    // invoked once when this scene is replaced/removed
+    virtual void on_destory() = 0;
 };
 
 }  // namespace uif
