@@ -1,10 +1,15 @@
-# cpp-fun
+# UI Framework
 
-Small project to eventually explore the following:
+A small project exploring how one might write a UI Framework.
 
-- [ ] ECS
-- [ ] Shaders
-- [ ] Animations
-- [ ] Audio
-- [ ] Physics
-- [ ] DOOM???
+### Build and Run
+
+```sh
+# build
+cmake -B build
+cd build
+make
+
+# run
+./ui-framework/UIF
+```
