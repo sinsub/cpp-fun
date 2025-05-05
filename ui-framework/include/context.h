@@ -1,6 +1,7 @@
 #ifndef UIF_CONTEXT_H_
 #define UIF_CONTEXT_H_
 
+#include <layout.h>
 #include <mouse.h>
 
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -43,13 +44,14 @@ class Context {
 
     // Data members
    public:
-    // Public for now, to allow scenes to render anything sfml allows
+    // TODO: make this private
     std::unique_ptr<sf::RenderWindow> window;
 
    private:
     MouseState mouse_state;
     std::unique_ptr<Scene> scene;
     std::queue<std::function<void()>> event_queue;
+    LayoutManager layout_manager;
 };
 
 struct Scene {
@@ -59,7 +61,7 @@ struct Scene {
     virtual void on_create() = 0;
 
     // invoked every frame to render the scene
-    virtual void render(Context *context) = 0;
+    virtual void render(Context *context, Layout *layout) = 0;
 
     // invoked once when this scene is replaced/removed
     virtual void on_destory() = 0;

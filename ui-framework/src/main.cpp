@@ -1,4 +1,5 @@
 #include <context.h>
+#include <layout.h>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -10,7 +11,7 @@ struct MyScene : public uif::Scene {
 
     void on_create() override { std::cout << "MyScene(" << id << ").on_create" << std::endl; }
 
-    void render(uif::Context *context) override {
+    void render(uif::Context *context, uif::Layout *layout) override {
         if (id % 2 == 0) {
             context->window->clear(sf::Color::White);
         } else {

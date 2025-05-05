@@ -94,7 +94,9 @@ void Context::render() {
     window->clear(sf::Color::Black);
 
     if (scene) {
-        scene->render(this);
+        layout_manager.clear();
+        scene->render(this, &layout_manager);
+        // TODO process layout_manager.rects;
     } else {
         default_render();
     }
