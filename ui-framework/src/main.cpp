@@ -14,8 +14,36 @@ struct MyScene : public uif::Scene {
     void render(uif::Context *context, uif::Layout *layout) override {
         if (id % 2 == 0) {
             context->window->clear(sf::Color::White);
+            layout->add_rect({
+                .x = 50,
+                .y = 50,
+                .width = 100,
+                .height = 100,
+                .color = sf::Color::Black
+            });
+            layout->add_rect({
+                .x = 100,
+                .y = 100,
+                .width = 100,
+                .height = 100,
+                .color = sf::Color::Red
+            });
         } else {
             context->window->clear(sf::Color::Black);
+            layout->add_rect({
+                .x = 50,
+                .y = 50,
+                .width = 100,
+                .height = 100,
+                .color = sf::Color::White
+            });
+            layout->add_rect({
+                .x = 100,
+                .y = 100,
+                .width = 100,
+                .height = 100,
+                .color = sf::Color::Red
+            });
         }
         if (++count == 5000) {
             if (id < 10) {

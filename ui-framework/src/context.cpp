@@ -1,6 +1,7 @@
 #include <context.h>
 
 #include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace uif {
 
@@ -96,7 +97,16 @@ void Context::render() {
     if (scene) {
         layout_manager.clear();
         scene->render(this, &layout_manager);
-        // TODO process layout_manager.rects;
+        for (auto rect : layout_manager.rects) {
+            // TODO on_hover
+            // TODO on_click
+            sf::RectangleShape shape;
+            shape.setSize({rect.width, rect.height});
+            shape.setPosition({rect.x, rect.y});
+            shape.setFillColor(rect.color);
+            shape.setOutlineColor(rect.color);
+            window->draw(shape);
+        }
     } else {
         default_render();
     }
