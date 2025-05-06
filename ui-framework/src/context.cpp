@@ -24,6 +24,13 @@ static void reset_for_frame(MouseState& mouse_state) {
     mouse_state.right_up = false;
 }
 
+static bool mouse_on_rect(MouseState& ms, float x, float y, float width, float height) {
+    if (!ms.in_window) return false;
+    if (ms.last_x < x || ms.last_x > x + width) return false;
+    if (ms.last_y < y || ms.last_y > y + height) return false;
+    return true;
+}
+
 // BEGIN: public API
 
 Context::Context(std::unique_ptr<sf::RenderWindow> window) : window(std::move(window)) {
@@ -98,13 +105,19 @@ void Context::render() {
         layout_manager.clear();
         scene->render(this, &layout_manager);
         for (auto rect : layout_manager.rects) {
-            // TODO on_hover
+            if (mouse_on_rect(mouse_state, rect.x, rect.y, rect.width, rect.height)) {
+                rect.on_hover(&rect);
+                if (mouse_state.left_down || mouse_state.right_down) {
+                    rect.on_mouse_down(&rect);
+                }
+            }
             // TODO on_click
             sf::RectangleShape shape;
             shape.setSize({rect.width, rect.height});
             shape.setPosition({rect.x, rect.y});
             shape.setFillColor(rect.color);
-            shape.setOutlineColor(rect.color);
+            shape.setOutlineThickness(rect.border_thickness);
+            shape.setOutlineColor(rect.border_color);
             window->draw(shape);
         }
     } else {
