@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <memory>
 
 namespace uif {
 
@@ -45,13 +46,14 @@ void Context::run() {
     }
 }
 
-void Context::set_scene(Scene* new_scene) {
-    event_queue.push([this, new_scene]() {
+void Context::set_scene(std::unique_ptr<Scene> new_scene) {
+    auto holder = std::make_shared<std::unique_ptr<Scene>>(std::move(new_scene));
+    event_queue.push([this, holder]() {
         if (this->scene) {
             this->scene->on_destory();
             this->scene = nullptr;
         }
-        this->scene = std::unique_ptr<Scene>(new_scene);
+        this->scene = std::move(*holder);
         if (this->scene) {
             this->scene->on_create();
         }

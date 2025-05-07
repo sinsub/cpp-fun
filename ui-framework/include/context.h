@@ -24,7 +24,7 @@ class Context {
 
     // Set a particular scene, this is asynchronous.
     // Switch occurs at the start of the next frame.
-    void set_scene(Scene *scene);
+    void set_scene(std::unique_ptr<Scene> scene);
 
    private:
     // The following three methods are interally called by `run`

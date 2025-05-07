@@ -40,7 +40,7 @@ struct MyScene : public uif::Scene {
         context->window->clear(background);
         if (++count == 20000) {
             if (id < 4) {
-                context->set_scene(new MyScene(id + 1));
+                context->set_scene(std::make_unique<MyScene>(id + 1));
             } else {
                 context->set_scene(nullptr);
             }
@@ -63,6 +63,6 @@ int main() {
     uif::Context context(std::make_unique<sf::RenderWindow>(sf::VideoMode({800, 600}),
                                                             "Test UI Framework", sf::Style::Default,
                                                             sf::State::Windowed, settings));
-    context.set_scene(new MyScene(0));
+    context.set_scene(std::make_unique<MyScene>(0));
     context.run();
 }
