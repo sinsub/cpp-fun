@@ -2,40 +2,16 @@
 
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <memory>
 
 namespace uif {
 
-static void init(MouseState& mouse_state, sf::RenderWindow& window) {
-    mouse_state.in_window = false;
-    mouse_state.left_down = false;
-    mouse_state.left_up = false;
-    mouse_state.right_down = false;
-    mouse_state.right_up = false;
-
-    auto pos = sf::Mouse::getPosition(window);
-    mouse_state.last_x = pos.x;
-    mouse_state.last_y = pos.y;
-}
-
-static void reset_for_frame(MouseState& mouse_state) {
-    mouse_state.left_down = false;
-    mouse_state.left_up = false;
-    mouse_state.right_down = false;
-    mouse_state.right_up = false;
-}
-
-static bool mouse_on_rect(MouseState& ms, float x, float y, float width, float height) {
-    if (!ms.in_window) return false;
-    if (ms.last_x < x || ms.last_x > x + width) return false;
-    if (ms.last_y < y || ms.last_y > y + height) return false;
-    return true;
-}
-
 // BEGIN: public API
 
 Context::Context(std::unique_ptr<sf::RenderWindow> window) : window(std::move(window)) {
-    init(mouse_state, *(this->window));
+    auto pos = sf::Mouse::getPosition(*(this->window));
+    mouse_state_init(mouse_state, pos.x, pos.y);
 }
 
 void Context::run() {
@@ -73,7 +49,7 @@ void Context::process_events() {
 
 // done once per frame
 void Context::process_sfml_events() {
-    reset_for_frame(mouse_state);
+    reset_mouse_state_for_frame(mouse_state);
     while (const std::optional event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
             window->close();
@@ -82,8 +58,8 @@ void Context::process_sfml_events() {
         } else if (event->is<sf::Event::MouseLeft>()) {
             mouse_state.in_window = false;
         } else if (const auto* mm = event->getIf<sf::Event::MouseMoved>()) {
-            mouse_state.last_x = mm->position.x;
-            mouse_state.last_y = mm->position.y;
+            mouse_state.x = mm->position.x;
+            mouse_state.y = mm->position.y;
         } else if (const auto* mbp = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (mbp->button == sf::Mouse::Button::Left) {
                 mouse_state.left_down = true;
@@ -145,8 +121,8 @@ void Context::default_render() {
         window->draw(dot);
     }
     if (mouse_state.in_window) {
-        float x = mouse_state.last_x - radius;
-        float y = mouse_state.last_y - radius;
+        float x = mouse_state.x - radius;
+        float y = mouse_state.y - radius;
         dot.setFillColor(sf::Color::White);
         dot.setPosition({x, y});
         window->draw(dot);
