@@ -38,8 +38,8 @@ struct MyScene : public uif::Scene {
                      [i, this](uif::Rect *rect) { this->clicked[i] = !this->clicked[i]; }});
         }
         context->window->clear(background);
-        if (++count == 20000) {
-            if (id < 4) {
+        if (++count == 10000) {
+            if (id < 2) {
                 context->set_scene(std::make_unique<MyScene>(id + 1));
             } else {
                 context->set_scene(nullptr);

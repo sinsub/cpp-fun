@@ -11,7 +11,7 @@ namespace uif {
 
 Context::Context(std::unique_ptr<sf::RenderWindow> window) : window(std::move(window)) {
     auto pos = sf::Mouse::getPosition(*(this->window));
-    mouse_state_init(mouse_state, pos.x, pos.y);
+    mouse_state.init(pos.x, pos.y);
 }
 
 void Context::run() {
@@ -49,7 +49,7 @@ void Context::process_events() {
 
 // done once per frame
 void Context::process_sfml_events() {
-    reset_mouse_state_for_frame(mouse_state);
+    mouse_state.frame_reset();
     while (const std::optional event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
             window->close();
@@ -62,15 +62,15 @@ void Context::process_sfml_events() {
             mouse_state.y = mm->position.y;
         } else if (const auto* mbp = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (mbp->button == sf::Mouse::Button::Left) {
-                mouse_state.left_down = true;
+                mouse_state.left.record_down(mouse_state.x, mouse_state.y);
             } else if (mbp->button == sf::Mouse::Button::Right) {
-                mouse_state.right_down = true;
+                mouse_state.right.record_down(mouse_state.x, mouse_state.y);
             }
         } else if (const auto* mbr = event->getIf<sf::Event::MouseButtonReleased>()) {
             if (mbr->button == sf::Mouse::Button::Left) {
-                mouse_state.left_up = true;
+                mouse_state.left.record_up(mouse_state.x, mouse_state.y);
             } else if (mbr->button == sf::Mouse::Button::Right) {
-                mouse_state.right_up = true;
+                mouse_state.right.record_up(mouse_state.x, mouse_state.y);
             }
         }
     }
@@ -83,9 +83,9 @@ void Context::render() {
         layout_manager.clear();
         scene->render(this, &layout_manager);
         for (auto rect : layout_manager.rects) {
-            if (mouse_on_rect(mouse_state, rect.x, rect.y, rect.width, rect.height)) {
+            if (mouse_state.on_rect(rect.x, rect.y, rect.width, rect.height)) {
                 rect.on_hover(&rect);
-                if (mouse_state.left_down || mouse_state.right_down) {
+                if (mouse_state.left.down()) {
                     rect.on_mouse_down(&rect);
                 }
             }
@@ -126,9 +126,9 @@ void Context::default_render() {
         dot.setFillColor(sf::Color::White);
         dot.setPosition({x, y});
         window->draw(dot);
-        if (mouse_state.left_down) {
+        if (mouse_state.left.down()) {
             left_clicks.push_back({x, y});
-        } else if (mouse_state.right_down) {
+        } else if (mouse_state.right.down()) {
             right_clicks.push_back({x, y});
         }
     }
