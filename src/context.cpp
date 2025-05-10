@@ -14,8 +14,7 @@ namespace uif {
 
 // BEGIN: public API
 
-Context::Context(std::unique_ptr<sf::RenderWindow> window)
-    : window(std::move(window)) {
+Context::Context(std::unique_ptr<sf::RenderWindow> window) : window(std::move(window)) {
   auto pos = sf::Mouse::getPosition(*(this->window));
   mouse_state_.Init(pos.x, pos.y);
 }
@@ -56,6 +55,10 @@ void Context::ProcessEvents() {
 // done once per frame
 void Context::ProcessSfmlEvents() {
   mouse_state_.FrameReset();
+  // get the position all the time. This might be outside!
+  auto pos = sf::Mouse::getPosition(*window);
+  mouse_state_.x = pos.x;
+  mouse_state_.y = pos.y;
   while (const std::optional event = window->pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
       window->close();
@@ -63,18 +66,13 @@ void Context::ProcessSfmlEvents() {
       mouse_state_.in_window = true;
     } else if (event->is<sf::Event::MouseLeft>()) {
       mouse_state_.in_window = false;
-    } else if (const auto* mm = event->getIf<sf::Event::MouseMoved>()) {
-      mouse_state_.x = mm->position.x;
-      mouse_state_.y = mm->position.y;
-    } else if (const auto* mbp =
-                   event->getIf<sf::Event::MouseButtonPressed>()) {
+    } else if (const auto* mbp = event->getIf<sf::Event::MouseButtonPressed>()) {
       if (mbp->button == sf::Mouse::Button::Left) {
         mouse_state_.left_button.RecordDown(mouse_state_.x, mouse_state_.y);
       } else if (mbp->button == sf::Mouse::Button::Right) {
         mouse_state_.right_button.RecordDown(mouse_state_.x, mouse_state_.y);
       }
-    } else if (const auto* mbr =
-                   event->getIf<sf::Event::MouseButtonReleased>()) {
+    } else if (const auto* mbr = event->getIf<sf::Event::MouseButtonReleased>()) {
       if (mbr->button == sf::Mouse::Button::Left) {
         mouse_state_.left_button.RecordUp(mouse_state_.x, mouse_state_.y);
       } else if (mbr->button == sf::Mouse::Button::Right) {
@@ -91,12 +89,29 @@ void Context::Render() {
     layout_manager_.Clear();
     scene_->Render(this, &layout_manager_);
     for (auto rect : layout_manager_.rects) {
+      // Mouse Events
       if (mouse_state_.OnRect(rect.x, rect.y, rect.width, rect.height)) {
         rect.on_hover(&rect);
         if (mouse_state_.left_button.Down()) {
-          rect.on_mouse_down(&rect);
+          rect.on_left_down(&rect);
+        }
+        if (mouse_state_.right_button.Down()) {
+          rect.on_right_down(&rect);
+        }
+        if (mouse_state_.left_button.Up()) {
+          rect.on_left_up(&rect);
+        }
+        if (mouse_state_.right_button.Up()) {
+          rect.on_right_up(&rect);
+        }
+        if (mouse_state_.left_button.IsClick()) {
+          rect.on_left_click(&rect);
+        }
+        if (mouse_state_.right_button.IsClick()) {
+          rect.on_right_click(&rect);
         }
       }
+
       sf::RectangleShape shape;
       shape.setSize({rect.width, rect.height});
       shape.setPosition({rect.x, rect.y});

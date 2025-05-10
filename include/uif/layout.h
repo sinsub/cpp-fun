@@ -17,7 +17,12 @@ struct Rect {
   sf::Color border_color;
   float border_thickness = 0;
   std::function<void(Rect*)> on_hover = [](Rect* rect) {};
-  std::function<void(Rect*)> on_mouse_down = [](Rect* rect) {};
+  std::function<void(Rect*)> on_left_down = [](Rect* rect) {};
+  std::function<void(Rect*)> on_right_down = [](Rect* rect) {};
+  std::function<void(Rect*)> on_left_up = [](Rect* rect) {};
+  std::function<void(Rect*)> on_right_up = [](Rect* rect) {};
+  std::function<void(Rect*)> on_left_click = [](Rect* rect) {};
+  std::function<void(Rect*)> on_right_click = [](Rect* rect) {};
 };
 
 // Limited interface for `Scene`

@@ -3,6 +3,13 @@
 #ifndef INCLUDE_UIF_MOUSE_H_
 #define INCLUDE_UIF_MOUSE_H_
 
+/**
+ * DETECTING CLICKS
+ *  - In Retained Mode GUIs, clicks are detected per element by maintining per element state.
+ *  - Since this is a Immedeate Mode GUI, GUI elements are not retained across fames.
+ *  - So the only option is to define double click based on the position and timing of the events.
+ */
+
 namespace uif {
 
 /**
@@ -19,10 +26,17 @@ class MouseButtonState {
   // queries
   bool Down();
   bool Up();
+  bool IsClick();
 
  private:
   bool down_ = false;
   bool up_ = false;
+
+  bool is_click_ = false;
+  int down_x_;
+  int down_y_;
+
+  static constexpr int kClickDistanceThreshold = 10;
 };
 
 /**

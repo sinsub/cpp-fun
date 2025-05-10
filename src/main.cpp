@@ -11,9 +11,7 @@ struct MyScene : public uif::Scene {
     std::cout << "MyScene(" << id << ")" << std::endl;
   }
 
-  void OnCreate() override {
-    std::cout << "MyScene(" << id_ << ").on_create" << std::endl;
-  }
+  void OnCreate() override { std::cout << "MyScene(" << id_ << ").on_create" << std::endl; }
 
   void Render(uif::Context *context, uif::Layout *layout) override {
     sf::Color background;
@@ -27,34 +25,48 @@ struct MyScene : public uif::Scene {
     }
     for (int i = 0; i < 3; i++) {
       float x = (i + 1) * 50 + i * 100;
-      layout->AddRect({.x = x,
-                       .y = 100,
-                       .width = 100,
-                       .height = 100,
-                       .color = clicked_[i] ? sf::Color::Blue : primary,
-                       .on_hover =
-                           [](uif::Rect *rect) {
-                             rect->border_thickness = 5;
-                             rect->border_color = sf::Color::Red;
-                           },
-                       .on_mouse_down =
-                           [i, this](uif::Rect *rect) {
-                             this->clicked_[i] = !this->clicked_[i];
-                           }});
+      uif::Rect rect{};
+      rect.x = x;
+      rect.y = 100;
+      rect.width = 100;
+      rect.height = 100;
+      rect.color = clicked_[i] ? sf::Color::Blue : primary;
+      rect.on_hover = [i](uif::Rect *rect) {
+        rect->border_thickness = 5;
+        rect->border_color = sf::Color::Red;
+      };
+      rect.on_left_down = [i](uif::Rect *rect) {
+        std::cout << "on_left_down(" << i << ")" << std::endl;
+      };
+      rect.on_right_down = [i](uif::Rect *rect) {
+        std::cout << "on_right_down(" << i << ")" << std::endl;
+      };
+      rect.on_left_up = [i](uif::Rect *rect) {
+        std::cout << "on_left_up(" << i << ")" << std::endl;
+      };
+      rect.on_right_up = [i](uif::Rect *rect) {
+        std::cout << "on_right_up(" << i << ")" << std::endl;
+      };
+      rect.on_left_click = [i, this](uif::Rect *rect) {
+        std::cout << "on_left_click(" << i << ")" << std::endl;
+        this->clicked_[i] = !this->clicked_[i];
+      };
+      rect.on_right_click = [i](uif::Rect *rect) {
+        std::cout << "on_right_click(" << i << ")" << std::endl;
+      };
+      layout->AddRect(rect);
     }
     context->window->clear(background);
-    if (++count_ == 10000) {
-      if (id_ < 2) {
-        context->SetScene(std::make_unique<MyScene>(id_ + 1));
-      } else {
-        context->SetScene(nullptr);
-      }
-    }
+    // if (++count_ == 10000) {
+    //   if (id_ < 2) {
+    //     context->SetScene(std::make_unique<MyScene>(id_ + 1));
+    //   } else {
+    //     context->SetScene(nullptr);
+    //   }
+    // }
   }
 
-  void OnDestory() override {
-    std::cout << "MyScene(" << id_ << ").on_destroy" << std::endl;
-  }
+  void OnDestory() override { std::cout << "MyScene(" << id_ << ").on_destroy" << std::endl; }
 
   ~MyScene() { std::cout << "~MyScene(" << id_ << ")" << std::endl; }
 
@@ -67,9 +79,9 @@ struct MyScene : public uif::Scene {
 int main() {
   sf::ContextSettings settings;
   settings.antiAliasingLevel = 8;
-  uif::Context context(std::make_unique<sf::RenderWindow>(
-      sf::VideoMode({800, 600}), "Test UI Framework", sf::Style::Default,
-      sf::State::Windowed, settings));
+  uif::Context context(std::make_unique<sf::RenderWindow>(sf::VideoMode({800, 600}),
+                                                          "Test UI Framework", sf::Style::Default,
+                                                          sf::State::Windowed, settings));
   context.SetScene(std::make_unique<MyScene>(0));
   context.Run();
 }
