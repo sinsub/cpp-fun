@@ -1,11 +1,12 @@
-#ifndef UIF_LAYOUT_H_
-#define UIF_LAYOUT_H_
+// Copyright 2025 Subodh Singh
 
-#include <SFML/Graphics/Color.hpp>
-#include <functional>
+#ifndef INCLUDE_UIF_LAYOUT_H_
+#define INCLUDE_UIF_LAYOUT_H_
+
 #include <vector>
 
-// TODO: define a Color type
+#include "SFML/Graphics/Color.hpp"
+#include "functional"
 
 namespace uif {
 
@@ -39,4 +40,4 @@ struct LayoutManager : public Layout {
 
 }  // namespace uif
 
-#endif
+#endif  // INCLUDE_UIF_LAYOUT_H_

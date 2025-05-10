@@ -1,13 +1,15 @@
-#ifndef UIF_CONTEXT_H_
-#define UIF_CONTEXT_H_
+// Copyright 2025 Subodh Singh
 
-#include <layout.h>
-#include <mouse.h>
+#ifndef INCLUDE_UIF_CONTEXT_H_
+#define INCLUDE_UIF_CONTEXT_H_
 
-#include <SFML/Graphics/RenderWindow.hpp>
 #include <functional>
 #include <memory>
 #include <queue>
+
+#include "SFML/Graphics/RenderWindow.hpp"
+#include "uif/layout.h"
+#include "uif/mouse.h"
 
 namespace uif {
 
@@ -17,7 +19,7 @@ struct Scene;
 // Context for a particular window.
 class Context {
  public:
-  Context(std::unique_ptr<sf::RenderWindow> window);
+  explicit Context(std::unique_ptr<sf::RenderWindow> window);
 
   // Start running the window. Returns after the window has been closed!
   void run();
@@ -44,7 +46,7 @@ class Context {
 
   // Data members
  public:
-  // TODO: make this private
+  // TODO(subodh): decide if this should be private
   std::unique_ptr<sf::RenderWindow> window;
 
  private:
@@ -69,4 +71,4 @@ struct Scene {
 
 }  // namespace uif
 
-#endif
+#endif  // INCLUDE_UIF_CONTEXT_H_

@@ -1,4 +1,6 @@
-#include <mouse.h>
+// Copyright 2025 Subodh Singh
+
+#include "uif/mouse.h"
 
 namespace uif {
 

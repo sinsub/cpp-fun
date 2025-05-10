@@ -1,9 +1,14 @@
-#include <context.h>
+// Copyright 2025 Subodh Singh
 
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Window/Mouse.hpp>
+#include "uif/context.h"
+
 #include <memory>
+#include <utility>
+#include <vector>
+
+#include "SFML/Graphics/CircleShape.hpp"
+#include "SFML/Graphics/RectangleShape.hpp"
+#include "SFML/Window/Mouse.hpp"
 
 namespace uif {
 
@@ -92,7 +97,6 @@ void Context::render() {
           rect.on_mouse_down(&rect);
         }
       }
-      // TODO on_click
       sf::RectangleShape shape;
       shape.setSize({rect.width, rect.height});
       shape.setPosition({rect.x, rect.y});

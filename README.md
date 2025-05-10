@@ -8,7 +8,7 @@ A small project exploring how one might write a UI Framework.
 # build
 cmake -B build
 cd build
-make
+cmake --build .
 
 # run
 ./uif

@@ -1,13 +1,13 @@
-#include <context.h>
-#include <layout.h>
+// Copyright 2025 Subodh Singh
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
 #include <iostream>
 #include <memory>
 
+#include "uif/context.h"
+#include "uif/layout.h"
+
 struct MyScene : public uif::Scene {
-  MyScene(int id) : uif::Scene(), id(id) {
+  explicit MyScene(int id) : uif::Scene(), id(id) {
     std::cout << "MyScene(" << id << ")" << std::endl;
   }
 

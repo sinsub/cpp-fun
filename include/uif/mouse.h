@@ -1,5 +1,7 @@
-#ifndef UIF_MOUSE_H_
-#define UIF_MOUSE_H_
+// Copyright 2025 Subodh Singh
+
+#ifndef INCLUDE_UIF_MOUSE_H_
+#define INCLUDE_UIF_MOUSE_H_
 
 namespace uif {
 
@@ -42,4 +44,4 @@ struct MouseState {
 
 }  // namespace uif
 
-#endif
+#endif  // INCLUDE_UIF_MOUSE_H_
