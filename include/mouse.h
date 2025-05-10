@@ -7,18 +7,18 @@ namespace uif {
 // queried for `down` and `up` which are per frame query, as well as
 // `is_click`, `is_double_click`, which is a multi-frame query.
 class MouseButtonState {
-public:
-    void frame_reset();
-    void record_down(int x, int y);
-    void record_up(int x, int y);
+ public:
+  void frame_reset();
+  void record_down(int x, int y);
+  void record_up(int x, int y);
 
-    // queries
-    bool down();
-    bool up();
+  // queries
+  bool down();
+  bool up();
 
-private:
-    bool down_ = false;
-    bool up_ = false;
+ private:
+  bool down_ = false;
+  bool up_ = false;
 };
 
 // struct for storing the mouse state for a window.
@@ -30,16 +30,15 @@ private:
 // - `right_down`: did we receive a right mouse down event in this frame
 // - `right_up`: did we receive a right mouse up event in this frame
 struct MouseState {
-    bool in_window;
-    int x;
-    int y;
-    MouseButtonState left, right;
+  bool in_window;
+  int x;
+  int y;
+  MouseButtonState left, right;
 
-    void init(int x, int y);
-    void frame_reset();
-    bool on_rect(float x, float y, float width, float height);
+  void init(int x, int y);
+  void frame_reset();
+  bool on_rect(float x, float y, float width, float height);
 };
-
 
 }  // namespace uif
 
