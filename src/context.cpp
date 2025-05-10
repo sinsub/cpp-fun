@@ -17,27 +17,27 @@ namespace uif {
 Context::Context(std::unique_ptr<sf::RenderWindow> window)
     : window(std::move(window)) {
   auto pos = sf::Mouse::getPosition(*(this->window));
-  mouse_state.init(pos.x, pos.y);
+  mouse_state_.Init(pos.x, pos.y);
 }
 
-void Context::run() {
+void Context::Run() {
   while (window->isOpen()) {
-    process_events();
-    process_sfml_events();
-    render();
+    ProcessEvents();
+    ProcessSfmlEvents();
+    Render();
   }
 }
 
-void Context::set_scene(std::unique_ptr<Scene> new_scene) {
+void Context::SetScene(std::unique_ptr<Scene> new_scene) {
   auto holder = std::make_shared<std::unique_ptr<Scene>>(std::move(new_scene));
-  event_queue.push([this, holder]() {
-    if (this->scene) {
-      this->scene->on_destory();
-      this->scene = nullptr;
+  event_queue_.push([this, holder]() {
+    if (this->scene_) {
+      this->scene_->OnDestory();
+      this->scene_ = nullptr;
     }
-    this->scene = std::move(*holder);
-    if (this->scene) {
-      this->scene->on_create();
+    this->scene_ = std::move(*holder);
+    if (this->scene_) {
+      this->scene_->OnCreate();
     }
   });
 }
@@ -46,54 +46,54 @@ void Context::set_scene(std::unique_ptr<Scene> new_scene) {
 
 // BEGIN: Render Loop
 
-void Context::process_events() {
-  while (!event_queue.empty()) {
-    event_queue.front()();
-    event_queue.pop();
+void Context::ProcessEvents() {
+  while (!event_queue_.empty()) {
+    event_queue_.front()();
+    event_queue_.pop();
   }
 }
 
 // done once per frame
-void Context::process_sfml_events() {
-  mouse_state.frame_reset();
+void Context::ProcessSfmlEvents() {
+  mouse_state_.FrameReset();
   while (const std::optional event = window->pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
       window->close();
     } else if (event->is<sf::Event::MouseEntered>()) {
-      mouse_state.in_window = true;
+      mouse_state_.in_window = true;
     } else if (event->is<sf::Event::MouseLeft>()) {
-      mouse_state.in_window = false;
+      mouse_state_.in_window = false;
     } else if (const auto* mm = event->getIf<sf::Event::MouseMoved>()) {
-      mouse_state.x = mm->position.x;
-      mouse_state.y = mm->position.y;
+      mouse_state_.x = mm->position.x;
+      mouse_state_.y = mm->position.y;
     } else if (const auto* mbp =
                    event->getIf<sf::Event::MouseButtonPressed>()) {
       if (mbp->button == sf::Mouse::Button::Left) {
-        mouse_state.left.record_down(mouse_state.x, mouse_state.y);
+        mouse_state_.left_button.RecordDown(mouse_state_.x, mouse_state_.y);
       } else if (mbp->button == sf::Mouse::Button::Right) {
-        mouse_state.right.record_down(mouse_state.x, mouse_state.y);
+        mouse_state_.right_button.RecordDown(mouse_state_.x, mouse_state_.y);
       }
     } else if (const auto* mbr =
                    event->getIf<sf::Event::MouseButtonReleased>()) {
       if (mbr->button == sf::Mouse::Button::Left) {
-        mouse_state.left.record_up(mouse_state.x, mouse_state.y);
+        mouse_state_.left_button.RecordUp(mouse_state_.x, mouse_state_.y);
       } else if (mbr->button == sf::Mouse::Button::Right) {
-        mouse_state.right.record_up(mouse_state.x, mouse_state.y);
+        mouse_state_.right_button.RecordUp(mouse_state_.x, mouse_state_.y);
       }
     }
   }
 }
 
-void Context::render() {
+void Context::Render() {
   window->clear(sf::Color::Black);
 
-  if (scene) {
-    layout_manager.clear();
-    scene->render(this, &layout_manager);
-    for (auto rect : layout_manager.rects) {
-      if (mouse_state.on_rect(rect.x, rect.y, rect.width, rect.height)) {
+  if (scene_) {
+    layout_manager_.Clear();
+    scene_->Render(this, &layout_manager_);
+    for (auto rect : layout_manager_.rects) {
+      if (mouse_state_.OnRect(rect.x, rect.y, rect.width, rect.height)) {
         rect.on_hover(&rect);
-        if (mouse_state.left.down()) {
+        if (mouse_state_.left_button.Down()) {
           rect.on_mouse_down(&rect);
         }
       }
@@ -106,13 +106,13 @@ void Context::render() {
       window->draw(shape);
     }
   } else {
-    default_render();
+    DefaultRender();
   }
 
   window->display();
 }
 
-void Context::default_render() {
+void Context::DefaultRender() {
   static std::vector<std::pair<float, float>> left_clicks{};
   static std::vector<std::pair<float, float>> right_clicks{};
   float radius = 10.f;
@@ -127,15 +127,15 @@ void Context::default_render() {
     dot.setPosition({loc.first, loc.second});
     window->draw(dot);
   }
-  if (mouse_state.in_window) {
-    float x = mouse_state.x - radius;
-    float y = mouse_state.y - radius;
+  if (mouse_state_.in_window) {
+    float x = mouse_state_.x - radius;
+    float y = mouse_state_.y - radius;
     dot.setFillColor(sf::Color::White);
     dot.setPosition({x, y});
     window->draw(dot);
-    if (mouse_state.left.down()) {
+    if (mouse_state_.left_button.Down()) {
       left_clicks.push_back({x, y});
-    } else if (mouse_state.right.down()) {
+    } else if (mouse_state_.right_button.Down()) {
       right_clicks.push_back({x, y});
     }
   }

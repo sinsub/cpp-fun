@@ -22,27 +22,27 @@ class Context {
   explicit Context(std::unique_ptr<sf::RenderWindow> window);
 
   // Start running the window. Returns after the window has been closed!
-  void run();
+  void Run();
 
   // Set a particular scene, this is asynchronous.
   // Switch occurs at the start of the next frame.
-  void set_scene(std::unique_ptr<Scene> scene);
+  void SetScene(std::unique_ptr<Scene> scene);
 
  private:
   // The following three methods are interally called by `run`
   // in the exact sequence for each frame.
 
   // Processes events that were received by the context (`event_queue`)
-  void process_events();
+  void ProcessEvents();
 
   // Processs events that were received by the `sf::RenderWindow`
-  void process_sfml_events();
+  void ProcessSfmlEvents();
 
-  // If there is a  `scene`, calls `scene->render(this)`.
-  // If there is no `scene`, calls `default_render`
-  void render();
+  // If there is a  `scene`, calls `scene->Render(this)`.
+  // If there is no `scene`, calls `DefaultRender`
+  void Render();
 
-  void default_render();
+  void DefaultRender();
 
   // Data members
  public:
@@ -50,23 +50,23 @@ class Context {
   std::unique_ptr<sf::RenderWindow> window;
 
  private:
-  MouseState mouse_state;
-  std::unique_ptr<Scene> scene;
-  std::queue<std::function<void()>> event_queue;
-  LayoutManager layout_manager;
+  MouseState mouse_state_;
+  std::unique_ptr<Scene> scene_;
+  std::queue<std::function<void()>> event_queue_;
+  LayoutManager layout_manager_;
 };
 
 struct Scene {
   virtual ~Scene() = default;
 
   // invoked once when the scene is set
-  virtual void on_create() = 0;
+  virtual void OnCreate() = 0;
 
   // invoked every frame to render the scene
-  virtual void render(Context *context, Layout *layout) = 0;
+  virtual void Render(Context *context, Layout *layout) = 0;
 
   // invoked once when this scene is replaced/removed
-  virtual void on_destory() = 0;
+  virtual void OnDestory() = 0;
 };
 
 }  // namespace uif

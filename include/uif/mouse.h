@@ -5,41 +5,40 @@
 
 namespace uif {
 
-// Keeps track of button state. The idea here is this can be
-// queried for `down` and `up` which are per frame query, as well as
-// `is_click`, `is_double_click`, which is a multi-frame query.
+/**
+ * Can be used to keep track of the state of a button.
+ * For example, recording and query for down/up events.
+ * More to be added: click, double click, drag
+ */
 class MouseButtonState {
  public:
-  void frame_reset();
-  void record_down(int x, int y);
-  void record_up(int x, int y);
+  void FrameReset();
+  void RecordDown(int x, int y);
+  void RecordUp(int x, int y);
 
   // queries
-  bool down();
-  bool up();
+  bool Down();
+  bool Up();
 
  private:
   bool down_ = false;
   bool up_ = false;
 };
 
-// struct for storing the mouse state for a window.
-// - `in_window`: has the mouse entered the window.
-// - `x`: last known x position of the mouse, check `in_window`
-// - `y`: last known y position of the mouse, check `in_window`
-// - `left_down`: did we receive a left mouse down event in this frame
-// - `left_up`: did we receive a left mouse up event in this frame
-// - `right_down`: did we receive a right mouse down event in this frame
-// - `right_up`: did we receive a right mouse up event in this frame
+/**
+ * Can be used to keep track of the state of the mouse.
+ * NOTE: `x` and `y` are relative to window and are accurate only if `in_window`
+ * is true
+ */
 struct MouseState {
   bool in_window;
   int x;
   int y;
-  MouseButtonState left, right;
+  MouseButtonState left_button, right_button;
 
-  void init(int x, int y);
-  void frame_reset();
-  bool on_rect(float x, float y, float width, float height);
+  void Init(int x, int y);
+  void FrameReset();
+  bool OnRect(float x, float y, float width, float height);
 };
 
 }  // namespace uif

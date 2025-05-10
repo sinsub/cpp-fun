@@ -4,8 +4,8 @@
 
 namespace uif {
 
-void LayoutManager::add_rect(Rect rect) { rects.push_back(rect); }
+void LayoutManager::AddRect(Rect rect) { rects.push_back(rect); }
 
-void LayoutManager::clear() { rects.clear(); }
+void LayoutManager::Clear() { rects.clear(); }
 
 }  // namespace uif
