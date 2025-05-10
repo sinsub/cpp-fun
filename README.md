@@ -11,5 +11,5 @@ cd build
 make
 
 # run
-./ui-framework/UIF
+./uif
 ```
