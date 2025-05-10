@@ -110,6 +110,9 @@ void Context::Render() {
         if (mouse_state_.right_button.IsClick()) {
           rect.on_right_click(&rect);
         }
+        if (mouse_state_.left_button.IsDoubleClick()) {
+          rect.on_double_click(&rect);
+        }
       }
 
       sf::RectangleShape shape;

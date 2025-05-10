@@ -54,6 +54,9 @@ struct MyScene : public uif::Scene {
       rect.on_right_click = [i](uif::Rect *rect) {
         std::cout << "on_right_click(" << i << ")" << std::endl;
       };
+      rect.on_double_click = [i](uif::Rect *rect) {
+        std::cout << "on_double_click(" << i << ")" << std::endl;
+      };
       layout->AddRect(rect);
     }
     context->window->clear(background);

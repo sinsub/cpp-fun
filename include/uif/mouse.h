@@ -10,6 +10,7 @@
  *  - So the only option is to define double click based on the position and timing of the events.
  */
 
+#include <chrono>
 namespace uif {
 
 /**
@@ -27,16 +28,33 @@ class MouseButtonState {
   bool Down();
   bool Up();
   bool IsClick();
+  bool IsDoubleClick();
 
  private:
   bool down_ = false;
   bool up_ = false;
 
   bool is_click_ = false;
-  int down_x_;
-  int down_y_;
+  bool is_double_click_ = false;
+  bool check_double_click_ = false;
+
+  // location of last down event
+  int down_x_ = 0;
+  int down_y_ = 0;
+
+  // location of last down event of the last click event
+  int click_x_ = 0;
+  int click_y_ = 0;
+
+  // time of the last down event
+  std::chrono::steady_clock::time_point down_time_{};
+  // time of the last up event of the last click event
+  std::chrono::steady_clock::time_point click_time_{};
 
   static constexpr int kClickDistanceThreshold = 10;
+  static constexpr int kDoubleClickDistanceThreshold = 10;
+  static constexpr int kClickTimeThresholdMs = 200;
+  static constexpr int kDoubleClickTimeThresholdMs = 500;
 };
 
 /**

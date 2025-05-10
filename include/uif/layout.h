@@ -23,6 +23,7 @@ struct Rect {
   std::function<void(Rect*)> on_right_up = [](Rect* rect) {};
   std::function<void(Rect*)> on_left_click = [](Rect* rect) {};
   std::function<void(Rect*)> on_right_click = [](Rect* rect) {};
+  std::function<void(Rect*)> on_double_click = [](Rect* rect) {};
 };
 
 // Limited interface for `Scene`
