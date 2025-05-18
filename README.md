@@ -13,3 +13,12 @@ cmake --build .
 # run
 ./uif
 ```
+
+### Linting and Formatter
+
+```sh
+# lint
+cpplint --filter=-whitespace/line_length --recursive src include
+# format
+clang-format -i src/*.cpp include/uif/*.h
+```
