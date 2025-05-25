@@ -56,19 +56,6 @@ class Context {
   LayoutManager layout_manager_;
 };
 
-struct Scene {
-  virtual ~Scene() = default;
-
-  // invoked once when the scene is set
-  virtual void OnCreate() = 0;
-
-  // invoked every frame to render the scene
-  virtual void Render(Context *context, Layout *layout) = 0;
-
-  // invoked once when this scene is replaced/removed
-  virtual void OnDestory() = 0;
-};
-
 }  // namespace uif
 
 #endif  // INCLUDE_UIF_CONTEXT_H_

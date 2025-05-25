@@ -5,6 +5,7 @@
 
 #include "uif/context.h"
 #include "uif/layout.h"
+#include "uif/scene.h"
 
 struct MyScene : public uif::Scene {
   explicit MyScene(int id) : uif::Scene(), id_(id) {
@@ -35,38 +36,13 @@ struct MyScene : public uif::Scene {
         rect->border_thickness = 5;
         rect->border_color = sf::Color::Red;
       };
-      rect.on_left_down = [i](uif::Rect *rect) {
-        std::cout << "on_left_down(" << i << ")" << std::endl;
-      };
-      rect.on_right_down = [i](uif::Rect *rect) {
-        std::cout << "on_right_down(" << i << ")" << std::endl;
-      };
-      rect.on_left_up = [i](uif::Rect *rect) {
-        std::cout << "on_left_up(" << i << ")" << std::endl;
-      };
-      rect.on_right_up = [i](uif::Rect *rect) {
-        std::cout << "on_right_up(" << i << ")" << std::endl;
-      };
       rect.on_left_click = [i, this](uif::Rect *rect) {
         std::cout << "on_left_click(" << i << ")" << std::endl;
         this->clicked_[i] = !this->clicked_[i];
       };
-      rect.on_right_click = [i](uif::Rect *rect) {
-        std::cout << "on_right_click(" << i << ")" << std::endl;
-      };
-      rect.on_double_click = [i](uif::Rect *rect) {
-        std::cout << "on_double_click(" << i << ")" << std::endl;
-      };
       layout->AddRect(rect);
     }
     context->window->clear(background);
-    // if (++count_ == 10000) {
-    //   if (id_ < 2) {
-    //     context->SetScene(std::make_unique<MyScene>(id_ + 1));
-    //   } else {
-    //     context->SetScene(nullptr);
-    //   }
-    // }
   }
 
   void OnDestory() override { std::cout << "MyScene(" << id_ << ").on_destroy" << std::endl; }

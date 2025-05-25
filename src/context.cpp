@@ -9,6 +9,7 @@
 #include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Window/Mouse.hpp"
+#include "uif/scene.h"
 
 namespace uif {
 
