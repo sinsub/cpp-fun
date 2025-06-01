@@ -63,6 +63,12 @@ void Context::ProcessSfmlEvents() {
   while (const std::optional event = window->pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
       window->close();
+    } else if (const auto* re = event->getIf<sf::Event::Resized>()) {
+      // update the view to the new size of the window
+      float width = re->size.x;
+      float height = re->size.y;
+      sf::FloatRect visibleArea({0.0, 0.0}, {width, height});
+      window->setView(sf::View(visibleArea));
     } else if (event->is<sf::Event::MouseEntered>()) {
       mouse_state_.in_window = true;
     } else if (event->is<sf::Event::MouseLeft>()) {
